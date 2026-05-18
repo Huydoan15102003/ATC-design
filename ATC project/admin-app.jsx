@@ -7,7 +7,7 @@ const { useState, useMemo, useEffect, useRef } = React;
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "activeTab": "teachers",
   "drawerTab": "overview",
-  "drawerOpen": "linh"
+  "drawerOpen": "Huy"
 }/*EDITMODE-END*/;
 
 /* ─────────────── MOCK DATA ─────────────── */
