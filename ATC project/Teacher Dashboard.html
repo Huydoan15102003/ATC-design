@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hanoi K-Lab — Teacher Dashboard</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0b1220; --ink-2: #1f2a3d; --ink-3: #2c3a52;
+  --muted: #5b6577; --muted-2: #8892a3; --muted-3: #a3acba;
+  --hair: #e6e9ef; --hair-2: #eef0f4; --hair-3: #f2f4f8;
+  --bg: #ffffff; --canvas: #f7f8fb; --canvas-2: #f3f5f9;
+  --primary: #2563eb; --primary-600: #1e54d4; --primary-700: #1a47b8;
+  --primary-tint: #eef4ff; --primary-tint-2: #e0ebff;
+  --focus-ring: rgba(37,99,235,0.18);
+  --success: #16a34a; --success-2: #15803d; --success-tint: #e9f7ee; --success-tint-2: #d4ecdd;
+  --warn: #d97706; --warn-2: #b45309; --warn-tint: #fef3e2; --warn-tint-2: #fce7c4;
+  --danger: #dc2626; --danger-tint: #fdecec; --danger-tint-2: #f8d4d4;
+  --navy-1: #0f172a;
+  --shadow-card: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.05);
+  --shadow-card-2: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.07);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink); background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv11','ss01','ss03';
+}
+
+/* ── Layout ── */
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  background: #fff; border-right: 1px solid var(--hair);
+  display: flex; flex-direction: column;
+  padding: 22px 12px 20px;
+  position: sticky; top: 0; height: 100vh;
+}
+.sb-logo { display: flex; align-items: center; gap: 10px; padding: 4px 10px 22px; margin-bottom: 6px; border-bottom: 1px solid var(--hair-2); }
+.sb-logo .mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy-1); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; letter-spacing: -0.01em; }
+.sb-logo .text { line-height: 1.1; }
+.sb-logo .name { font-size: 13.5px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+.sb-logo .org  { font-size: 11px; color: var(--muted-2); margin-top: 2px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+.sb-section { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-3); padding: 18px 12px 8px; }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; }
+.sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 9px; border-radius: 8px; color: var(--ink-2); font-size: 13.5px; font-weight: 450; cursor: default; border-left: 3px solid transparent; text-decoration: none; transition: background-color .15s, color .15s; }
+.sb-item:hover { background: var(--hair-3); }
+.sb-item .ico { color: var(--muted); display: grid; place-items: center; }
+.sb-item.active { background: var(--primary-tint); color: var(--primary-700); border-left-color: var(--primary); font-weight: 500; }
+.sb-item.active .ico { color: var(--primary); }
+.sb-foot { margin-top: auto; padding: 10px 4px 0; border-top: 1px solid var(--hair-2); }
+.sb-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: default; }
+.sb-user:hover { background: var(--hair-3); }
+.sb-user .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg,#2563eb,#6ea8ff); color: #fff; font-weight: 600; font-size: 12px; display: grid; place-items: center; flex-shrink: 0; }
+.sb-user .meta { line-height: 1.15; flex: 1; min-width: 0; }
+.sb-user .uname { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .urole { font-size: 11px; color: var(--muted-2); margin-top: 2px; }
+
+/* ── Main ── */
+.main { display: flex; flex-direction: column; min-width: 0; }
+.topbar { background: #fff; border-bottom: 1px solid var(--hair); height: 56px; display: flex; align-items: center; padding: 0 32px; gap: 14px; position: sticky; top: 0; z-index: 5; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.breadcrumb .sep { color: var(--muted-3); }
+.breadcrumb .now { color: var(--ink); font-weight: 500; }
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.top-btn { height: 34px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--hair); background: #fff; color: var(--ink-2); font: inherit; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; cursor: default; transition: border-color .15s, background-color .15s; }
+.top-btn:hover { border-color: #d6dbe4; background: #fbfcfd; }
+.notif-dot { position: relative; }
+.notif-dot::after { content: ''; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); border: 1.5px solid #fff; }
+
+/* ── Buttons ── */
+.btn { appearance: none; border: 0; cursor: default; height: 38px; padding: 0 18px; border-radius: 9px; font: inherit; font-size: 13.5px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: background-color .15s, border-color .15s, box-shadow .15s; letter-spacing: -0.005em; }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 6px 14px rgba(37,99,235,.22); }
+.btn-primary:hover { background: var(--primary-600); }
+.btn-outline { background: #fff; border: 1.5px solid var(--primary); color: var(--primary); }
+.btn-outline:hover { background: var(--primary-tint); }
+
+/* ── Dashboard page ── */
+.dash-page { padding: 32px 36px 80px; max-width: 1240px; width: 100%; }
+
+/* Greeting */
+.greeting-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 26px; }
+.greeting-hi { font-size: 22px; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
+.greeting-date { font-size: 13px; color: var(--muted-2); font-weight: 400; }
+
+/* Quick actions */
+.quick-actions { display: flex; gap: 10px; margin-bottom: 44px; }
+
+/* Section header */
+.sect-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sect-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.sect-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted-3); font-weight: 500; background: var(--hair-3); border-radius: 999px; padding: 1px 7px; }
+.sect-link { font-size: 13px; font-weight: 500; color: var(--primary); display: flex; align-items: center; gap: 3px; cursor: default; text-decoration: none; }
+.sect-link:hover { text-decoration: underline; }
+
+/* ── Class cards ── */
+.class-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 44px; scrollbar-width: thin; scrollbar-color: var(--hair) transparent; }
+.class-row::-webkit-scrollbar { height: 4px; }
+.class-row::-webkit-scrollbar-thumb { background: var(--hair); border-radius: 4px; }
+
+.class-card { background: #fff; border: 1px solid var(--hair); border-radius: 14px; min-width: 246px; flex-shrink: 0; overflow: hidden; box-shadow: var(--shadow-card); display: flex; flex-direction: column; transition: box-shadow .18s, border-color .15s, transform .12s; cursor: default; }
+.class-card:hover { border-color: #cdd3df; box-shadow: var(--shadow-card-2); transform: translateY(-1px); }
+.cc-banner { height: 4px; flex-shrink: 0; }
+.cc-body { padding: 18px 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.cc-head { display: flex; flex-direction: column; gap: 7px; }
+.cc-name { font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); line-height: 1.3; }
+.cc-stats { display: flex; gap: 22px; }
+.cc-stat .k { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-3); margin-bottom: 5px; }
+.cc-stat .v { font-size: 20px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink-2); line-height: 1; }
+.cc-foot { display: flex; align-items: center; justify-content: flex-end; padding: 11px 20px; border-top: 1px solid var(--hair-2); background: var(--canvas); }
+.cc-link { font-size: 12.5px; font-weight: 500; color: var(--primary); display: flex; align-items: center; gap: 4px; cursor: default; }
+
+/* ── Badges ── */
+.level-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.04em; font-weight: 500; white-space: nowrap; }
+.level-pill.beginner     { background: var(--warn-tint);    color: var(--warn-2); }
+.level-pill.intermediate { background: var(--primary-tint); color: var(--primary-700); }
+.level-pill.advanced     { background: var(--success-tint); color: var(--success-2); }
+
+.score-pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; letter-spacing: -0.01em; }
+.score-pill .d { font-weight: 400; opacity: 0.55; font-size: 10.5px; margin-left: 1px; }
+.score-pill.good { background: var(--success-tint); color: var(--success-2); }
+.score-pill.warn { background: var(--warn-tint);    color: var(--warn-2); }
+.score-pill.bad  { background: var(--danger-tint);  color: var(--danger); }
+
+.type-chip { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.type-speaking     { background: var(--primary-tint);   color: var(--primary-700); }
+.type-pronunciation{ background: var(--success-tint-2); color: var(--success-2); }
+.type-both         { background: #f3f0ff; color: #5b21b6; }
+
+/* ── Sessions table ── */
+.data-card { background: #fff; border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-card); }
+table.data { width: 100%; border-collapse: collapse; }
+table.data thead tr { background: var(--canvas-2); }
+table.data th { padding: 11px 16px; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); font-weight: 500; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+table.data td { padding: 13px 16px; font-size: 13.5px; color: var(--ink-2); border-bottom: 1px solid var(--hair-2); vertical-align: middle; }
+table.data tbody tr:last-child td { border-bottom: none; }
+table.data tbody tr:hover td { background: var(--canvas); }
+
+.ucell { display: flex; align-items: center; gap: 10px; }
+.ucell-av { width: 32px; height: 32px; border-radius: 50%; color: #fff; font-size: 11px; font-weight: 600; display: grid; place-items: center; flex-shrink: 0; letter-spacing: -0.01em; }
+.u-name { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.u-code { font-size: 11px; color: var(--muted-2); margin-top: 1px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; }
+.td-muted { color: var(--muted) !important; font-size: 13px !important; }
+.td-mono  { font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; letter-spacing: 0.02em; color: var(--muted) !important; }
+
+.action-btn { height: 30px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--hair); background: #fff; color: var(--ink-2); font: inherit; font-size: 12.5px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; cursor: default; white-space: nowrap; transition: border-color .15s, background-color .15s; }
+.action-btn:hover { border-color: #c5ccd9; background: var(--canvas); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ── Tweaks defaults ── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "teacherName": "Seo-yeon Kim",
+  "greeting": "morning",
+  "primary": "#2563eb"
+}/*EDITMODE-END*/;
+
+const PRIMARY_OPTIONS = ['#2563eb', '#1d4ed8', '#1f6feb', '#3b6cf6'];
+
+/* ── Utilities ── */
+function hexA(hex, a) { const h=hex.replace('#',''); const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16); return `rgba(${r},${g},${b},${a})`; }
+function shade(hex, amt) { const h=hex.replace('#',''); const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16); const f=c=>Math.max(0,Math.min(255,Math.round(c+255*amt))); return `rgb(${f(r)},${f(g)},${f(b)})`; }
+function bandClass(n) { return n>=80?'good':n>=60?'warn':'bad'; }
+function initials(name) { return name.split(' ').slice(-2).map(p=>p[0]).join('').toUpperCase(); }
+
+/* ── Icons ── */
+const SI = ({size=18,children}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IconDash  = ({size=18}) => <SI size={size}><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></SI>;
+const IconUp    = ({size=18}) => <SI size={size}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></SI>;
+const IconMic   = ({size=18}) => <SI size={size}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></SI>;
+const IconUsers = ({size=18}) => <SI size={size}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></SI>;
+const IconHist  = ({size=18}) => <SI size={size}><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></SI>;
+const IconBell  = ({size=18}) => <SI size={size}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></SI>;
+const IconHelp  = ({size=18}) => <SI size={size}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></SI>;
+const IconChevR = ({size=18}) => <SI size={size}><polyline points="9 18 15 12 9 6"/></SI>;
+const IconChevD = ({size=18}) => <SI size={size}><polyline points="6 9 12 15 18 9"/></SI>;
+const IconFile  = ({size=18}) => <SI size={size}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></SI>;
+
+/* ── Data ── */
+const STUDENTS = {
+  nh: { name:'Nguyễn Hà Linh',   code:'KL-1042', grad:['#2563eb','#6ea8ff'] },
+  tp: { name:'Trần Phương Anh',  code:'KL-1058', grad:['#0f766e','#5eead4'] },
+  pk: { name:'Phạm Khánh Vy',    code:'KL-1083', grad:['#7c3aed','#c4b5fd'] },
+  lq: { name:'Lê Minh Quân',     code:'KL-1071', grad:['#2563eb','#6ea8ff'] },
+  vq: { name:'Vũ Quỳnh Anh',     code:'KL-1105', grad:['#0f766e','#5eead4'] },
+  dh: { name:'Đỗ Hoàng Nam',     code:'KL-1099', grad:['#7c3aed','#c4b5fd'] },
+  bn: { name:'Bùi Đăng Khoa',    code:'KL-1057', grad:['#7c3aed','#c4b5fd'] },
+  ht: { name:'Hoàng Trà My',     code:'KL-1118', grad:['#b45309','#fbbf24'] },
+};
+
+const CLASSES = [
+  { id:'ielts-am', name:'IELTS Speaking · Morning',  level:'Intermediate', color:['#2563eb','#6ea8ff'], studentIds:['nh','tp','pk'], avgScore:78 },
+  { id:'biz-eng',  name:'Business English · Evening', level:'Advanced',     color:['#0f766e','#5eead4'], studentIds:['lq','vq'],      avgScore:90 },
+  { id:'conv-b2',  name:'Conversation · B2',          level:'Intermediate', color:['#7c3aed','#c4b5fd'], studentIds:['dh','bn'],      avgScore:71 },
+  { id:'found-a2', name:'Foundation · A2',            level:'Beginner',     color:['#b45309','#fbbf24'], studentIds:['ht'],           avgScore:58 },
+];
+
+const SESSIONS = [
+  { id:1, student:STUDENTS.lq, cls:CLASSES[1], type:'Speaking',      date:'May 17, 2026', score:88 },
+  { id:2, student:STUDENTS.vq, cls:CLASSES[1], type:'Pronunciation', date:'May 17, 2026', score:76 },
+  { id:3, student:STUDENTS.nh, cls:CLASSES[0], type:'Both',          date:'May 16, 2026', score:71 },
+  { id:4, student:STUDENTS.tp, cls:CLASSES[0], type:'Speaking',      date:'May 15, 2026', score:84 },
+  { id:5, student:STUDENTS.dh, cls:CLASSES[2], type:'Pronunciation', date:'May 15, 2026', score:62 },
+  { id:6, student:STUDENTS.ht, cls:CLASSES[3], type:'Both',          date:'May 14, 2026', score:53 },
+];
+
+/* ── Sidebar ── */
+function Sidebar({ teacherName }) {
+  const nav = [
+    { id:'dash', label:'Dashboard',                 icon:IconDash,  active:true },
+    { id:'up',   label:'Upload session',            icon:IconUp },
+    { id:'pron', label:'Pronunciation assessment',  icon:IconMic },
+    { id:'cls',  label:'My classes',                icon:IconUsers },
+    { id:'hist', label:'Session history',           icon:IconHist },
+  ];
+  const inits = teacherName.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return (
+    <aside className="sidebar">
+      <div className="sb-logo">
+        <div className="mark">K</div>
+        <div className="text">
+          <div className="name">SpeakIQ</div>
+          <div className="org">Hanoi K-Lab</div>
+        </div>
+      </div>
+      <div className="sb-section">Teacher</div>
+      <nav className="sb-nav">
+        {nav.map(it => {
+          const Icon = it.icon;
+          return (
+            <a key={it.id} className={`sb-item${it.active?' active':''}`}>
+              <span className="ico"><Icon size={17} /></span>
+              <span>{it.label}</span>
+            </a>
+          );
+        })}
+      </nav>
+      <div className="sb-foot">
+        <div className="sb-user">
+          <div className="avatar">{inits}</div>
+          <div className="meta">
+            <div className="uname">{teacherName}</div>
+            <div className="urole">Senior Coach</div>
+          </div>
+          <IconChevD size={14} />
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/* ── ClassCard ── */
+function ClassCard({ cls }) {
+  const lvl = cls.level.toLowerCase().split(' ')[0];
+  return (
+    <div className="class-card">
+      <div className="cc-banner" style={{ background:`linear-gradient(90deg,${cls.color[0]},${cls.color[1]})` }} />
+      <div className="cc-body">
+        <div className="cc-head">
+          <div className="cc-name">{cls.name}</div>
+          <span className={`level-pill ${lvl}`}>{cls.level}</span>
+        </div>
+        <div className="cc-stats">
+          <div className="cc-stat">
+            <div className="k">Students</div>
+            <div className="v">{cls.studentIds.length}</div>
+          </div>
+          <div className="cc-stat">
+            <div className="k">Avg score</div>
+            <div className="v" style={{fontSize:14,paddingTop:3}}>
+              <span className={`score-pill ${bandClass(cls.avgScore)}`}>
+                {cls.avgScore}<span className="d">/100</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="cc-foot">
+        <span className="cc-link">View class <IconChevR size={13} /></span>
+      </div>
+    </div>
+  );
+}
+
+/* ── SessionRow ── */
+function SessionRow({ s }) {
+  const typeKey = s.type === 'Both' ? 'both' : s.type.toLowerCase();
+  return (
+    <tr>
+      <td>
+        <div className="ucell">
+          <div className="ucell-av" style={{ background:`linear-gradient(135deg,${s.student.grad[0]},${s.student.grad[1]})` }}>
+            {initials(s.student.name)}
+          </div>
+          <div>
+            <div className="u-name">{s.student.name}</div>
+            <div className="u-code">{s.student.code}</div>
+          </div>
+        </div>
+      </td>
+      <td className="td-muted">{s.cls.name}</td>
+      <td><span className={`type-chip type-${typeKey}`}>{s.type}</span></td>
+      <td className="td-mono">{s.date}</td>
+      <td><span className={`score-pill ${bandClass(s.score)}`}>{s.score}<span className="d">/100</span></span></td>
+      <td>
+        <button className="action-btn">
+          <IconFile size={13} />
+          View report
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+/* ── App ── */
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  const greetWord = { morning:'Good morning', afternoon:'Good afternoon', evening:'Good evening' }[t.greeting] || 'Good morning';
+  const firstName = t.teacherName.split(' ')[0];
+
+  const styleVars = {
+    '--primary':        t.primary,
+    '--primary-600':    shade(t.primary, -0.10),
+    '--primary-700':    shade(t.primary, -0.18),
+    '--focus-ring':     hexA(t.primary, 0.18),
+    '--primary-tint':   hexA(t.primary, 0.07),
+    '--primary-tint-2': hexA(t.primary, 0.18),
+  };
+
+  return (
+    <div className="app" style={styleVars}>
+      <Sidebar teacherName={t.teacherName} />
+
+      <main className="main">
+        {/* ── Topbar ── */}
+        <div className="topbar">
+          <div className="breadcrumb">
+            <span>Teacher</span>
+            <span className="sep">/</span>
+            <span className="now">Dashboard</span>
+          </div>
+          <div className="top-actions">
+            <button className="top-btn"><IconHelp size={15} /> Help</button>
+            <button className="top-btn notif-dot" style={{ width:34, justifyContent:'center', padding:0 }}>
+              <IconBell size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Content ── */}
+        <div className="dash-page">
+
+          {/* Greeting */}
+          <div className="greeting-row">
+            <span className="greeting-hi">{greetWord}, {firstName}</span>
+            <span className="greeting-date">Sunday, May 17, 2026</span>
+          </div>
+
+          {/* Quick actions */}
+          <div className="quick-actions">
+            <button className="btn btn-primary">
+              <IconUp size={15} />
+              Upload session
+            </button>
+            <button className="btn btn-outline">
+              <IconMic size={15} />
+              Start pronunciation assessment
+            </button>
+          </div>
+
+          {/* My Classes */}
+          <div className="sect-head">
+            <span className="sect-title">
+              My classes
+              <span className="sect-count">{CLASSES.length} active</span>
+            </span>
+            <a className="sect-link">View all <IconChevR size={13} /></a>
+          </div>
+
+          <div className="class-row">
+            {CLASSES.map(c => <ClassCard key={c.id} cls={c} />)}
+          </div>
+
+          {/* Recent Sessions */}
+          <div className="sect-head">
+            <span className="sect-title">
+              Recent sessions
+              <span className="sect-count">sorted newest first</span>
+            </span>
+            <a className="sect-link">View all <IconChevR size={13} /></a>
+          </div>
+
+          <div className="data-card">
+            <table className="data">
+              <colgroup>
+                <col style={{width:'26%'}} />
+                <col style={{width:'22%'}} />
+                <col style={{width:'14%'}} />
+                <col style={{width:'16%'}} />
+                <col style={{width:'13%'}} />
+                <col style={{width:'9%'}} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Class</th>
+                  <th>Session type</th>
+                  <th>Date</th>
+                  <th>Overall score</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {SESSIONS.map(s => <SessionRow key={s.id} s={s} />)}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </main>
+
+      {/* ── Tweaks ── */}
+      <TweaksPanel>
+        <TweakSection label="Teacher" />
+        <TweakText
+          label="Name"
+          value={t.teacherName}
+          onChange={v => setTweak('teacherName', v)}
+        />
+        <TweakSection label="Greeting" />
+        <TweakRadio
+          label="Time of day"
+          value={t.greeting}
+          options={[
+            { value:'morning',   label:'Morning' },
+            { value:'afternoon', label:'Afternoon' },
+            { value:'evening',   label:'Evening' },
+          ]}
+          onChange={v => setTweak('greeting', v)}
+        />
+        <TweakSection label="Theme" />
+        <TweakColor
+          label="Primary"
+          value={t.primary}
+          options={PRIMARY_OPTIONS}
+          onChange={v => setTweak('primary', v)}
+        />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

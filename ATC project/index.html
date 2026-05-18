@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hanoi K-Lab — Design System Hub</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0b1220; --ink-2: #1f2a3d;
+  --muted: #5b6577; --muted-2: #8892a3; --muted-3: #a3acba;
+  --hair: #e6e9ef; --hair-2: #eef0f4; --hair-3: #f2f4f8;
+  --canvas: #f7f8fb;
+  --primary: #2563eb; --primary-tint: #eef4ff; --primary-700: #1a47b8;
+  --success: #16a34a; --success-tint: #e9f7ee; --success-border: #bbf7d0;
+  --warn: #d97706; --warn-tint: #fef3e2; --warn-border: #fde68a;
+  --purple: #7c3aed; --purple-tint: #f5f3ff; --purple-border: #ddd6fe;
+  --navy: #0f172a;
+  --shadow-card: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.05);
+  --shadow-card-hover: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.10);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink); background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: #fff; border-bottom: 1px solid var(--hair);
+  padding: 0 48px; height: 60px;
+  display: flex; align-items: center; gap: 14px;
+}
+.header .mark { width: 32px; height: 32px; border-radius: 9px; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.header .site-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+.header .divider { width: 1px; height: 20px; background: var(--hair); }
+.header .sub { font-size: 13px; color: var(--muted); }
+.header .spacer { flex: 1; }
+.header .env-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted-2); background: var(--hair-3); border: 1px solid var(--hair); padding: 3px 10px; border-radius: 99px; }
+
+/* ── Hero ── */
+.hero { padding: 56px 48px 36px; }
+.hero h1 { font-size: 28px; font-weight: 500; color: var(--ink); margin: 0 0 8px; letter-spacing: -0.02em; }
+.hero p  { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.6; max-width: 520px; }
+
+/* ── Groups ── */
+.groups { padding: 0 48px 64px; display: flex; flex-direction: column; gap: 40px; }
+.group-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted-3); margin-bottom: 14px;
+}
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+/* ── Card ── */
+.screen-card {
+  background: #fff; border: 1px solid var(--hair); border-radius: 12px;
+  padding: 20px 22px; box-shadow: var(--shadow-card);
+  text-decoration: none; color: inherit;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: box-shadow .18s, transform .18s, border-color .18s;
+}
+.screen-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-1px); border-color: var(--hair-2); }
+
+.sc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.sc-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+.sc-icon.admin   { background: var(--primary-tint); color: var(--primary-700); }
+.sc-icon.teacher { background: var(--success-tint); color: var(--success); }
+.sc-icon.student { background: var(--purple-tint);  color: var(--purple); }
+.sc-icon.shared  { background: var(--hair-3); color: var(--muted); }
+
+.sc-tag { font-size: 10.5px; font-weight: 500; padding: 2px 8px; border-radius: 99px; border: 1px solid; }
+.sc-tag.admin   { background: var(--primary-tint); color: var(--primary-700); border-color: #c7d9ff; }
+.sc-tag.teacher { background: var(--success-tint); color: var(--success);     border-color: var(--success-border); }
+.sc-tag.student { background: var(--purple-tint);  color: var(--purple);      border-color: var(--purple-border); }
+.sc-tag.shared  { background: var(--hair-3); color: var(--muted-2); border-color: var(--hair); }
+
+.sc-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+.sc-desc  { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.sc-path  { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted-3); margin-top: 4px; }
+.sc-arrow { font-size: 13px; color: var(--primary); margin-top: auto; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="mark">KL</div>
+  <span class="site-name">Hanoi K-Lab</span>
+  <div class="divider"></div>
+  <span class="sub">Design screens</span>
+  <span class="spacer"></span>
+  <span class="env-badge">May 2026</span>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>Screen index</h1>
+  <p>All design screens organized by user group — Admin, Teacher, and Student. Click any card to open the screen.</p>
+</section>
+
+<!-- Groups -->
+<div class="groups">
+
+  <!-- Admin -->
+  <div>
+    <div class="group-label">Admin portal</div>
+    <div class="cards">
+
+      <a href="admin/Dashboard.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon admin">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L10 3l7 7.5"/><path d="M4.5 9v8h4v-5h3v5h4V9"/></svg>
+          </div>
+          <span class="sc-tag admin">Admin</span>
+        </div>
+        <div>
+          <div class="sc-title">Dashboard</div>
+          <div class="sc-desc">Platform overview — stats, session chart, recent sessions table.</div>
+          <div class="sc-path">admin/Dashboard.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="admin/Users.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon admin">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 15v-1a4 4 0 00-4-4H6a4 4 0 00-4 4v1"/><circle cx="8" cy="7" r="3"/><path d="M19 15v-1a3 3 0 00-2.25-2.9M16 4a3 3 0 010 5.83"/></svg>
+          </div>
+          <span class="sc-tag admin">Admin</span>
+        </div>
+        <div>
+          <div class="sc-title">User management</div>
+          <div class="sc-desc">Browse, invite, and manage all students and teachers.</div>
+          <div class="sc-path">admin/Users.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="admin/Session Report.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon admin">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v5"/><path d="M13 17l3 3 5-5"/></svg>
+          </div>
+          <span class="sc-tag admin">Admin</span>
+        </div>
+        <div>
+          <div class="sc-title">Session report</div>
+          <div class="sc-desc">Detailed session scoring and pronunciation breakdown.</div>
+          <div class="sc-path">admin/Session Report.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="admin/Speak Grow Report.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon admin">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 5 3-3 3 6"/></svg>
+          </div>
+          <span class="sc-tag admin">Admin</span>
+        </div>
+        <div>
+          <div class="sc-title">Speak &amp; Grow report</div>
+          <div class="sc-desc">Progress trends and growth analytics across all students.</div>
+          <div class="sc-path">admin/Speak Grow Report.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Teacher -->
+  <div>
+    <div class="group-label">Teacher portal</div>
+    <div class="cards">
+
+      <a href="teacher/Dashboard.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon teacher">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L10 3l7 7.5"/><path d="M4.5 9v8h4v-5h3v5h4V9"/></svg>
+          </div>
+          <span class="sc-tag teacher">Teacher</span>
+        </div>
+        <div>
+          <div class="sc-title">Dashboard</div>
+          <div class="sc-desc">Teacher home — upcoming sessions, student roster, quick actions.</div>
+          <div class="sc-path">teacher/Dashboard.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="teacher/Upload Session.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon teacher">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14V4M6 8l4-4 4 4"/><path d="M4 16h12"/></svg>
+          </div>
+          <span class="sc-tag teacher">Teacher</span>
+        </div>
+        <div>
+          <div class="sc-title">Upload session</div>
+          <div class="sc-desc">Submit a new session recording for AI scoring and feedback.</div>
+          <div class="sc-path">teacher/Upload Session.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="teacher/Session Report.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon teacher">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v5"/><path d="M13 17l3 3 5-5"/></svg>
+          </div>
+          <span class="sc-tag teacher">Teacher</span>
+        </div>
+        <div>
+          <div class="sc-title">Session report</div>
+          <div class="sc-desc">View AI-generated score breakdowns and student feedback.</div>
+          <div class="sc-path">teacher/Session Report.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Student -->
+  <div>
+    <div class="group-label">Student portal</div>
+    <div class="cards">
+
+      <a href="student/My Classes.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon student">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="2"/><path d="M7 7h6M7 11h4"/></svg>
+          </div>
+          <span class="sc-tag student">Student</span>
+        </div>
+        <div>
+          <div class="sc-title">My classes</div>
+          <div class="sc-desc">View enrolled classes, upcoming sessions, and classmates.</div>
+          <div class="sc-path">student/My Classes.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="student/Session History.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon student">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+          </div>
+          <span class="sc-tag student">Student</span>
+        </div>
+        <div>
+          <div class="sc-title">Session history</div>
+          <div class="sc-desc">Past sessions with scores, status, and downloadable reports.</div>
+          <div class="sc-path">student/Session History.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+      <a href="student/Pronunciation Assessment.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon student">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2a3 3 0 013 3v5a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M5 10a5 5 0 0010 0M10 15v3M7 18h6"/></svg>
+          </div>
+          <span class="sc-tag student">Student</span>
+        </div>
+        <div>
+          <div class="sc-title">Pronunciation assessment</div>
+          <div class="sc-desc">AI pronunciation scoring with phoneme-level visual feedback.</div>
+          <div class="sc-path">student/Pronunciation Assessment.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Shared -->
+  <div>
+    <div class="group-label">Shared</div>
+    <div class="cards">
+
+      <a href="shared/Login Screen.html" class="screen-card">
+        <div class="sc-top">
+          <div class="sc-icon shared">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+          </div>
+          <span class="sc-tag shared">Shared</span>
+        </div>
+        <div>
+          <div class="sc-title">Login screen</div>
+          <div class="sc-desc">Entry point — email + password login for all user roles.</div>
+          <div class="sc-path">shared/Login Screen.html</div>
+        </div>
+        <div class="sc-arrow">Open →</div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

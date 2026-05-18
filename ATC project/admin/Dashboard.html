@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hanoi K-Lab — Admin Dashboard</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0b1220; --ink-2: #1f2a3d; --ink-3: #2c3a52;
+  --muted: #5b6577; --muted-2: #8892a3; --muted-3: #a3acba;
+  --hair: #e6e9ef; --hair-2: #eef0f4; --hair-3: #f2f4f8;
+  --bg: #ffffff; --canvas: #f7f8fb;
+  --primary: #2563eb; --primary-600: #1e54d4; --primary-700: #1a47b8;
+  --primary-tint: #eef4ff; --primary-tint-2: #e0ebff;
+  --success: #16a34a; --success-tint: #e9f7ee; --success-border: #bbf7d0;
+  --warn: #d97706; --warn-tint: #fef3e2; --warn-border: #fde68a;
+  --danger: #dc2626; --danger-tint: #fdecec; --danger-border: #fecaca;
+  --navy-1: #0f172a;
+  --shadow-card: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.05);
+  --shadow-card-2: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.07);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink); background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Layout ── */
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  background: #fff; border-right: 1px solid var(--hair);
+  display: flex; flex-direction: column;
+  padding: 22px 12px 20px;
+  position: sticky; top: 0; height: 100vh;
+}
+.sb-logo { display: flex; align-items: center; gap: 10px; padding: 4px 10px 22px; margin-bottom: 6px; border-bottom: 1px solid var(--hair-2); }
+.sb-logo .mark { width: 30px; height: 30px; border-radius: 8px; background: var(--navy-1); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; letter-spacing: -0.01em; }
+.sb-logo .text { line-height: 1.1; }
+.sb-logo .name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.sb-logo .org  { font-size: 11px; color: var(--muted-2); margin-top: 2px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+.sb-section { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-3); padding: 18px 12px 8px; }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; }
+.sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 9px; border-radius: 8px; color: var(--ink-2); font-size: 13.5px; font-weight: 400; cursor: default; border-left: 3px solid transparent; text-decoration: none; transition: background-color .15s, color .15s; }
+.sb-item:hover { background: var(--hair-3); }
+.sb-item .ico { color: var(--muted); display: grid; place-items: center; width: 18px; height: 18px; }
+.sb-item.active { background: var(--primary-tint); color: var(--primary-700); border-left-color: var(--primary); font-weight: 500; }
+.sb-item.active .ico { color: var(--primary); }
+.sb-foot { margin-top: auto; padding: 10px 4px 0; border-top: 1px solid var(--hair-2); }
+.sb-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: default; }
+.sb-user:hover { background: var(--hair-3); }
+.sb-user .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy-1); color: #fff; font-weight: 600; font-size: 12px; display: grid; place-items: center; flex-shrink: 0; }
+.sb-user .meta { line-height: 1.15; flex: 1; min-width: 0; }
+.sb-user .uname { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .role { font-size: 11px; color: var(--muted-2); }
+
+/* ── Main ── */
+.main { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  background: #fff; border-bottom: 1px solid var(--hair);
+  padding: 0 28px; height: 56px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar .page-title { font-size: 15px; font-weight: 500; color: var(--ink); }
+.topbar .spacer { flex: 1; }
+.topbar .tb-date { font-size: 12.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.topbar .tb-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 7px;
+  background: var(--primary); color: #fff;
+  font-size: 13px; font-weight: 500; border: none; cursor: default;
+}
+
+.content { padding: 28px; flex: 1; display: flex; flex-direction: column; gap: 24px; }
+
+/* ── Stats row ── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat-card {
+  background: #fff; border: 1px solid var(--hair); border-radius: 12px;
+  padding: 20px 22px; box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.stat-card .sc-label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-card .sc-value { font-size: 32px; font-weight: 500; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.stat-card .sc-sub { font-size: 12px; color: var(--muted-2); display: flex; align-items: center; gap: 6px; }
+.sc-sub .green { color: var(--success); font-weight: 500; }
+.sc-sub .amber { color: var(--warn); font-weight: 500; }
+
+/* mini bar */
+.mini-bar-wrap { display: flex; flex-direction: column; gap: 4px; }
+.mini-bar-track { height: 4px; background: var(--hair-2); border-radius: 99px; overflow: hidden; }
+.mini-bar-fill  { height: 100%; border-radius: 99px; background: var(--primary); }
+.mini-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-3); }
+
+/* score pill */
+.score-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 13px; font-weight: 500; border: 1px solid; }
+.score-pill.green { background: var(--success-tint); color: var(--success); border-color: var(--success-border); }
+.score-pill.amber { background: var(--warn-tint);    color: var(--warn);    border-color: var(--warn-border); }
+.score-pill.red   { background: var(--danger-tint);  color: var(--danger);  border-color: var(--danger-border); }
+
+/* ── Chart card ── */
+.chart-card {
+  background: #fff; border: 1px solid var(--hair); border-radius: 12px;
+  padding: 20px 24px; box-shadow: var(--shadow-card);
+}
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-header .ch-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+.card-header .ch-count { font-size: 13px; color: var(--muted); }
+.card-header .ch-count strong { color: var(--ink); font-weight: 500; }
+
+.bar-chart { display: flex; align-items: flex-end; gap: 10px; height: 160px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; height: 100%; justify-content: flex-end; }
+.bar-col .bar {
+  width: 100%; border-radius: 5px 5px 0 0;
+  background: var(--primary); min-height: 4px;
+  transition: opacity .15s;
+}
+.bar-col .bar:hover { opacity: 0.75; }
+.bar-col .bar-label { font-size: 11px; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.bar-col .bar-val { font-size: 10.5px; color: var(--muted); }
+
+.y-axis {
+  display: flex; flex-direction: column; justify-content: space-between;
+  height: 160px; padding: 0 10px 0 0;
+  font-size: 10.5px; color: var(--muted-3); font-family: 'JetBrains Mono', monospace;
+  text-align: right; flex-shrink: 0;
+}
+.chart-area { display: flex; align-items: flex-end; flex: 1; position: relative; }
+.chart-area::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 22px;
+  border-bottom: 1px solid var(--hair-2);
+}
+
+/* ── Bottom row ── */
+.bottom-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+/* ── Table card ── */
+.table-card {
+  background: #fff; border: 1px solid var(--hair); border-radius: 12px;
+  box-shadow: var(--shadow-card); overflow: hidden;
+}
+.table-card .card-header { padding: 18px 22px 0; margin-bottom: 0; }
+.sessions-table { width: 100%; border-collapse: collapse; }
+.sessions-table th {
+  font-size: 11px; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--hair);
+  background: var(--hair-3);
+}
+.sessions-table td {
+  padding: 12px 16px; font-size: 13.5px; color: var(--ink-2);
+  border-bottom: 1px solid var(--hair-2);
+}
+.sessions-table tr:last-child td { border-bottom: none; }
+.sessions-table tbody tr:hover td { background: var(--hair-3); }
+
+/* student cell */
+.stu-cell { display: flex; align-items: center; gap: 10px; }
+.stu-avatar { width: 30px; height: 30px; border-radius: 50%; color: #fff; font-weight: 600; font-size: 11.5px; display: grid; place-items: center; flex-shrink: 0; }
+.stu-name { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.stu-id   { font-size: 11px; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; }
+
+/* status badge */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 12px; font-weight: 500; border: 1px solid; }
+.badge.completed  { background: var(--success-tint); color: var(--success); border-color: var(--success-border); }
+.badge.processing { background: var(--warn-tint);    color: var(--warn);    border-color: var(--warn-border); }
+.badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+.table-foot {
+  padding: 12px 22px; border-top: 1px solid var(--hair-2);
+  display: flex; justify-content: flex-end;
+  background: var(--hair-3);
+}
+.view-all { font-size: 13px; font-weight: 500; color: var(--primary); text-decoration: none; }
+.view-all:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+
+const { useState } = React;
+
+/* ── Sidebar icons ── */
+const Ico = ({ d, size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    {d.map((p, i) => <path key={i} d={p} />)}
+  </svg>
+);
+
+const ICONS = {
+  dashboard:  ['M3 10.5L10 3l7 7.5','M4.5 9v8h4v-5h3v5h4V9'],
+  users:      ['M14 15v-1a4 4 0 00-4-4H6a4 4 0 00-4 4v1','M10 7a3 3 0 100-6 3 3 0 000 6','M19 15v-1a3 3 0 00-2.25-2.9','M16 4a3 3 0 010 5.83'],
+  sessions:   ['M8 6h8','M8 10h5','M6 3H4a1 1 0 00-1 1v13a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1h-2','M8 3h4v2H8V3z'],
+  report:     ['M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v5','M13 17l3 3 5-5'],
+  settings:   ['M10 13a3 3 0 100-6 3 3 0 000 6','M10 3v2','M10 15v2','M3 10h2','M15 10h2','M5.64 5.64l1.42 1.42','M12.95 12.95l1.41 1.41','M5.64 14.36l1.42-1.42','M12.95 7.05l1.41-1.41'],
+};
+
+/* ── Bar chart data ── */
+const BAR_DATA = [
+  { date: 'Mon 12', count: 28 },
+  { date: 'Tue 13', count: 41 },
+  { date: 'Wed 14', count: 35 },
+  { date: 'Thu 15', count: 52 },
+  { date: 'Fri 16', count: 47 },
+  { date: 'Sat 17', count: 19 },
+  { date: 'Sun 18', count: 12 },
+];
+const BAR_MAX = Math.max(...BAR_DATA.map(d => d.count));
+const BAR_TOTAL = BAR_DATA.reduce((s, d) => s + d.count, 0);
+
+/* ── Table data ── */
+const SESSIONS = [
+  { student: 'Nguyen Thi Lan',  sid: 'S-0041', teacher: 'James Wilson',   cls: 'Business English B2', type: 'Speaking',   date: 'May 18', score: 82, status: 'completed',  av: '#2563eb' },
+  { student: 'Tran Minh Duc',   sid: 'S-0039', teacher: 'Sarah Mitchell', cls: 'IELTS Prep 7.0',      type: 'Pronunciation', date: 'May 18', score: 67, status: 'completed',  av: '#7c3aed' },
+  { student: 'Le Phuong Anh',   sid: 'S-0037', teacher: 'David Park',     cls: 'Conversation C1',     type: 'Speaking',   date: 'May 17', score: null, status: 'processing', av: '#0891b2' },
+  { student: 'Hoang Van Thanh', sid: 'S-0036', teacher: 'James Wilson',   cls: 'Business English B2', type: 'Speaking',   date: 'May 17', score: 91, status: 'completed',  av: '#059669' },
+  { student: 'Pham Thu Ha',     sid: 'S-0034', teacher: 'Sarah Mitchell', cls: 'IELTS Prep 7.0',      type: 'Writing',    date: 'May 17', score: 73, status: 'completed',  av: '#d97706' },
+  { student: 'Vo Quoc Bao',     sid: 'S-0033', teacher: 'Emily Chen',     cls: 'Kids English L3',     type: 'Speaking',   date: 'May 16', score: null, status: 'processing', av: '#dc2626' },
+  { student: 'Nguyen Xuan Loc', sid: 'S-0031', teacher: 'David Park',     cls: 'Conversation C1',     type: 'Pronunciation', date: 'May 16', score: 58, status: 'completed',  av: '#7c3aed' },
+  { student: 'Do Bich Ngoc',    sid: 'S-0029', teacher: 'Emily Chen',     cls: 'Kids English L3',     type: 'Speaking',   date: 'May 15', score: 85, status: 'completed',  av: '#0891b2' },
+];
+
+function scorePill(n) {
+  if (n === null) return null;
+  const cls = n >= 80 ? 'green' : n >= 60 ? 'amber' : 'red';
+  return <span className={`score-pill ${cls}`}>{n}</span>;
+}
+
+/* ── Tweaks defaults ── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "totalStudents": 128,
+  "totalTeachers": 18,
+  "sessionsMonth": 342,
+  "avgScore": 74.3,
+  "adminName": "Admin Minh"
+}/*EDITMODE-END*/;
+
+const PRIMARY_OPTIONS = ['#2563eb','#0891b2','#7c3aed','#059669','#dc2626'];
+
+function App() {
+  const { t: tRaw, setTweak } = useTweaks(TWEAK_DEFAULTS);
+  const t = tRaw || TWEAK_DEFAULTS;
+
+  const avgScore = parseFloat(t.avgScore);
+  const avgCls = avgScore >= 80 ? 'green' : avgScore >= 60 ? 'amber' : 'red';
+
+  const prevSessions = 289;
+  const fillPct = Math.min(100, Math.round((t.sessionsMonth / Math.max(prevSessions, t.sessionsMonth)) * 100));
+  const prevFillPct = Math.min(100, Math.round((prevSessions / Math.max(prevSessions, t.sessionsMonth)) * 100));
+
+  return (
+    <div className="app">
+      {/* ── Sidebar ── */}
+      <aside className="sidebar">
+        <div className="sb-logo">
+          <div className="mark">KL</div>
+          <div className="text">
+            <div className="name">K-Lab</div>
+            <div className="org">Admin</div>
+          </div>
+        </div>
+
+        <div className="sb-section">Main</div>
+        <nav className="sb-nav">
+          {[
+            { key:'dashboard', label:'Dashboard',   active:true  },
+            { key:'users',     label:'Users',        active:false },
+            { key:'sessions',  label:'Sessions',     active:false },
+            { key:'report',    label:'Reports',      active:false },
+          ].map(item => (
+            <a key={item.key} className={`sb-item${item.active?' active':''}`} href="#">
+              <span className="ico">
+                <Ico d={ICONS[item.key]} />
+              </span>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="sb-section">System</div>
+        <nav className="sb-nav">
+          <a className="sb-item" href="#">
+            <span className="ico"><Ico d={ICONS.settings} /></span>
+            Settings
+          </a>
+        </nav>
+
+        <div className="sb-foot">
+          <div className="sb-user">
+            <div className="avatar">AM</div>
+            <div className="meta">
+              <div className="uname">{t.adminName}</div>
+              <div className="role">Super admin</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Main ── */}
+      <div className="main">
+        {/* Topbar */}
+        <header className="topbar">
+          <span className="page-title">Dashboard</span>
+          <span className="spacer" />
+          <span className="tb-date">Sun, May 18 2026</span>
+          <button className="tb-btn">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M8 2v12M2 8h12" />
+            </svg>
+            Export report
+          </button>
+        </header>
+
+        <div className="content">
+
+          {/* ── Stats row ── */}
+          <div className="stats-row">
+            {/* Total Students */}
+            <div className="stat-card">
+              <div className="sc-label">Total students</div>
+              <div className="sc-value">{t.totalStudents}</div>
+              <div className="sc-sub">
+                <span className="green">↑ 3 this month</span>
+              </div>
+            </div>
+
+            {/* Total Teachers */}
+            <div className="stat-card">
+              <div className="sc-label">Total teachers</div>
+              <div className="sc-value">{t.totalTeachers}</div>
+              <div className="sc-sub">Across 4 classes</div>
+            </div>
+
+            {/* Sessions This Month */}
+            <div className="stat-card">
+              <div className="sc-label">Sessions this month</div>
+              <div className="sc-value">{t.sessionsMonth}</div>
+              <div className="mini-bar-wrap">
+                <div className="mini-bar-track">
+                  <div className="mini-bar-fill" style={{ width: `${fillPct}%` }} />
+                </div>
+                <div className="mini-bar-labels">
+                  <span>This month</span>
+                  <span>Last: {prevSessions}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Avg Score */}
+            <div className="stat-card">
+              <div className="sc-label">Platform avg score</div>
+              <div className="sc-value">{avgScore.toFixed(1)}</div>
+              <div className="sc-sub">
+                <span className={`score-pill ${avgCls}`} style={{ fontSize: 12 }}>{avgCls === 'green' ? '↑ Good' : avgCls === 'amber' ? '→ Fair' : '↓ Low'}</span>
+                <span>out of 100</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Sessions per day chart ── */}
+          <div className="chart-card">
+            <div className="card-header">
+              <span className="ch-title">Sessions this week</span>
+              <span className="ch-count"><strong>{BAR_TOTAL}</strong> total sessions</span>
+            </div>
+            <div style={{ display:'flex', gap:0, alignItems:'flex-end' }}>
+              <div className="y-axis">
+                {[BAR_MAX, Math.round(BAR_MAX*0.75), Math.round(BAR_MAX*0.5), Math.round(BAR_MAX*0.25), 0].map(v => (
+                  <span key={v}>{v}</span>
+                ))}
+              </div>
+              <div className="chart-area">
+                <div className="bar-chart">
+                  {BAR_DATA.map(d => (
+                    <div key={d.date} className="bar-col">
+                      <div className="bar-val">{d.count}</div>
+                      <div
+                        className="bar"
+                        style={{ height: `${(d.count / BAR_MAX) * 132}px` }}
+                        title={`${d.date}: ${d.count} sessions`}
+                      />
+                      <div className="bar-label">{d.date.split(' ')[0]}<br /><span style={{fontSize:10}}>{d.date.split(' ')[1]}</span></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Recent Sessions table ── */}
+          <div className="table-card">
+            <div className="card-header" style={{ padding:'18px 22px 14px' }}>
+              <span className="ch-title">Recent sessions</span>
+              <span className="ch-count">Sorted newest first</span>
+            </div>
+            <table className="sessions-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Teacher</th>
+                  <th>Class</th>
+                  <th>Session type</th>
+                  <th>Date</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SESSIONS.map((s, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div className="stu-cell">
+                        <div className="stu-avatar" style={{ background: s.av }}>
+                          {s.student.split(' ').map(w => w[0]).slice(-2).join('')}
+                        </div>
+                        <div>
+                          <div className="stu-name">{s.student}</div>
+                          <div className="stu-id">{s.sid}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{s.teacher}</td>
+                    <td>{s.cls}</td>
+                    <td>{s.type}</td>
+                    <td style={{ color:'var(--muted)', fontFamily:'JetBrains Mono, monospace', fontSize:12.5 }}>{s.date}</td>
+                    <td>{scorePill(s.score) ?? <span style={{ color:'var(--muted-3)' }}>—</span>}</td>
+                    <td>
+                      <span className={`badge ${s.status}`}>
+                        <span className="dot" />
+                        {s.status === 'completed' ? 'Completed' : 'Processing'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="table-foot">
+              <a href="Session Report.html" className="view-all">View all sessions →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── Tweaks ── */}
+      <TweaksPanel>
+        <TweakSection label="Stats" />
+        <TweakNumber label="Total students" value={t.totalStudents} onChange={v => setTweak('totalStudents', v)} />
+        <TweakNumber label="Total teachers" value={t.totalTeachers} onChange={v => setTweak('totalTeachers', v)} />
+        <TweakNumber label="Sessions this month" value={t.sessionsMonth} onChange={v => setTweak('sessionsMonth', v)} />
+        <TweakNumber label="Avg score" value={t.avgScore} onChange={v => setTweak('avgScore', v)} />
+        <TweakSection label="Admin" />
+        <TweakText label="Admin name" value={t.adminName} onChange={v => setTweak('adminName', v)} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
